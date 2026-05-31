@@ -1,0 +1,9 @@
+numpy>=2.0
+pandas>=2.0
+scipy>=1.10
+nba_api>=1.4
+requests>=2.30
+python-dotenv>=1.0
+pyarrow>=14.0
+streamlit>=1.30
+plotly>=5.18

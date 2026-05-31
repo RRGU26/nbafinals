@@ -1,0 +1,16 @@
+[project]
+name = "nba-finals-2026"
+version = "0.1.0"
+description = "Bayesian micro-model for NYK vs SAS 2026 NBA Finals"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "nba_api",
+    "requests",
+    "python-dotenv",
+    "pyarrow>=24.0.0",
+    "streamlit>=1.58.0",
+    "plotly>=6.7.0",
+]

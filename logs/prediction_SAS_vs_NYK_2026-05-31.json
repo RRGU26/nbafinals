@@ -1,0 +1,39 @@
+{
+  "as_of_date": "2026-05-31",
+  "home_team": "SAS",
+  "away_team": "NYK",
+  "home_win_prob": 0.7602847833337708,
+  "predicted_margin": 11.413293477671411,
+  "margin_std": 16.138274744319926,
+  "predicted_total": 221.8377438108838,
+  "total_std": 18.41491328495301,
+  "margin_80ci": [
+    -9.275974744546735,
+    32.102561699889556
+  ],
+  "total_80ci": [
+    198.22982497957406,
+    245.44566264219355
+  ],
+  "feature_values": {
+    "is_home": 1.0,
+    "net_diff": -6.875081894657603,
+    "pace_avg": -0.5451521980537137
+  },
+  "model_config": {
+    "recency_decay": 1.0,
+    "playoff_weight": 5.0,
+    "home_value": 3.0,
+    "rest_value": 0.5,
+    "use_opp_adjustment": false,
+    "last_n_games": 30,
+    "prior_precision": 100.0,
+    "feature_cols": "is_home,net_diff,pace_avg",
+    "n_features": 3,
+    "margin_rmse": 16.124437038809507,
+    "total_rmse": 15.240083430766322,
+    "win_accuracy": 0.75,
+    "sign_violations": 0,
+    "combined_score": 16.24447875419267
+  }
+}

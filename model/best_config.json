@@ -1,0 +1,16 @@
+{
+  "recency_decay": 1.0,
+  "playoff_weight": 5.0,
+  "home_value": 3.0,
+  "rest_value": 0.5,
+  "use_opp_adjustment": false,
+  "last_n_games": 30,
+  "prior_precision": 100.0,
+  "feature_cols": "is_home,net_diff,pace_avg",
+  "n_features": 3,
+  "margin_rmse": 16.124437038809507,
+  "total_rmse": 15.240083430766322,
+  "win_accuracy": 0.75,
+  "sign_violations": 0,
+  "combined_score": 16.24447875419267
+}
