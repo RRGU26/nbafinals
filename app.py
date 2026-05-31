@@ -425,17 +425,19 @@ with st.sidebar:
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TOP NAV (visible even when sidebar is collapsed — mobile fallback)
-# Writes to the same `nav` session key that the sidebar radio reads from,
-# so both stay in sync.
+# Uses on_click callbacks: those CAN modify widget key state, while
+# direct assignment after-the-widget cannot.
 # ─────────────────────────────────────────────────────────────────────────────
+def _set_nav(target_page):
+    st.session_state.nav = target_page
+
 nav_cols = st.columns(len(PAGES))
 for i, p in enumerate(PAGES.keys()):
     with nav_cols[i]:
         is_active = (p == page)
         btn_type = "primary" if is_active else "secondary"
-        if st.button(p, key=f"topnav_{i}", type=btn_type, width="stretch"):
-            st.session_state.nav = p
-            st.rerun()
+        st.button(p, key=f"topnav_{i}", type=btn_type, width="stretch",
+                    on_click=_set_nav, args=(p,))
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: OVERVIEW
