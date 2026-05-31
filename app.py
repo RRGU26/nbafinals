@@ -373,14 +373,11 @@ with st.sidebar:
         "📚 Historical Finals": "historical",
         "🔬 Methodology": "methodology",
     }
-    # Use session_state so top-of-page nav can sync with sidebar
-    if "selected_page" not in st.session_state:
-        st.session_state.selected_page = list(PAGES.keys())[0]
-    page = st.radio("Page", list(PAGES.keys()),
-                     index=list(PAGES.keys()).index(st.session_state.selected_page),
-                     label_visibility="collapsed",
-                     key="sidebar_nav")
-    st.session_state.selected_page = page
+    # Initialize the radio's session key BEFORE the widget renders.
+    # Top-nav buttons (below) write to this same key to switch pages.
+    if "nav" not in st.session_state:
+        st.session_state.nav = list(PAGES.keys())[0]
+    page = st.radio("Page", list(PAGES.keys()), label_visibility="collapsed", key="nav")
 
     st.markdown("---")
 
@@ -428,6 +425,8 @@ with st.sidebar:
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TOP NAV (visible even when sidebar is collapsed — mobile fallback)
+# Writes to the same `nav` session key that the sidebar radio reads from,
+# so both stay in sync.
 # ─────────────────────────────────────────────────────────────────────────────
 nav_cols = st.columns(len(PAGES))
 for i, p in enumerate(PAGES.keys()):
@@ -435,7 +434,7 @@ for i, p in enumerate(PAGES.keys()):
         is_active = (p == page)
         btn_type = "primary" if is_active else "secondary"
         if st.button(p, key=f"topnav_{i}", type=btn_type, width="stretch"):
-            st.session_state.selected_page = p
+            st.session_state.nav = p
             st.rerun()
 
 # ─────────────────────────────────────────────────────────────────────────────
