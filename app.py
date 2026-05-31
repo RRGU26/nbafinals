@@ -398,7 +398,26 @@ with st.sidebar:
         st.code("uv run python autoresearch.py 400", language="bash")
         st.code("uv run python series_sim.py", language="bash")
 
-    st.markdown('<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 2rem;">Built with Streamlit · Not financial advice</div>', unsafe_allow_html=True)
+    # Data freshness
+    from datetime import datetime
+    try:
+        latest_game_date = load_team_games()["GAME_DATE"].max()
+        days_old = (datetime.now() - latest_game_date).days
+        freshness_color = "#10b981" if days_old <= 2 else ("#fbbf24" if days_old <= 7 else "#ef4444")
+        st.markdown(f"""
+        <div style="font-size: 0.75rem; color: #6b7280; margin-top: 1.5rem; padding: 0.5rem; background: #f9fafb; border-radius: 6px;">
+            <div style="font-weight: 600; color: #374151;">Data Freshness</div>
+            <div style="margin-top: 0.25rem;">
+                Last game: <b>{latest_game_date.strftime('%b %d')}</b>
+                <span style="color: {freshness_color};">●</span>
+                {days_old}d ago
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    except Exception:
+        pass
+
+    st.markdown('<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 1.5rem;">Built with Streamlit · Not financial advice</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: OVERVIEW
@@ -550,7 +569,7 @@ if PAGES[page] == "overview":
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter, sans-serif", size=13),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Series outcome distribution
     st.markdown('<p class="section-header">📈 Series Outcome Distribution</p>', unsafe_allow_html=True)
@@ -574,7 +593,7 @@ if PAGES[page] == "overview":
                       paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family="Inter, sans-serif", size=12))
     fig.update_yaxes(range=[0, max([v for k, v in outcomes.items()]) * 1.2])
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Playoff path timeline
     st.markdown('<p class="section-header">🛤️ Playoff Path to Finals</p>', unsafe_allow_html=True)
@@ -604,10 +623,10 @@ if PAGES[page] == "overview":
 
     with col1:
         st.plotly_chart(render_path(nyk["po_games"], NYK_PRIMARY, "Knicks: 12-2 in playoffs"),
-                          use_container_width=True)
+                          width="stretch")
     with col2:
         st.plotly_chart(render_path(sas["po_games"], "#4A5258", "Spurs: 12-6 in playoffs"),
-                          use_container_width=True)
+                          width="stretch")
 
     # H2H
     st.markdown('<p class="section-header">🤝 Head-to-Head This Season</p>', unsafe_allow_html=True)
@@ -681,7 +700,7 @@ elif PAGES[page] == "games":
                       font=dict(family="Inter", size=12),
                       legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     fig.add_hline(y=0.5, line_dash="dash", line_color="#9ca3af")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Margin & total side by side
     col1, col2 = st.columns(2, gap="medium")
@@ -696,7 +715,7 @@ elif PAGES[page] == "games":
                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                           font=dict(family="Inter", size=11))
         fig.add_hline(y=0, line_color="#374151")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     with col2:
         st.markdown('<p class="section-header">Predicted total points</p>', unsafe_allow_html=True)
         totals = [p["predicted_total"] for p in per_game]
@@ -707,7 +726,7 @@ elif PAGES[page] == "games":
                           yaxis_range=[min(totals)-15, max(totals)+15], margin=dict(t=20, b=20),
                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                           font=dict(family="Inter", size=11))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     # Detailed table
     st.markdown('<p class="section-header">Game-by-game detail</p>', unsafe_allow_html=True)
@@ -721,7 +740,7 @@ elif PAGES[page] == "games":
         "Analytic": f"{p['analytic_margin_home']:+.1f}",
         "Bayesian": f"{p['bayes_margin_home']:+.1f}",
     } for p in per_game])
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: BETTING
@@ -732,7 +751,7 @@ elif PAGES[page] == "betting":
 
     col1, col2 = st.columns([3, 1])
     with col2:
-        refresh = st.button("🔄 Refresh odds", type="primary", use_container_width=True)
+        refresh = st.button("🔄 Refresh odds", type="primary", width="stretch")
     odds_cache_path = LOG_DIR / "last_odds_snapshot.json"
 
     if refresh or not odds_cache_path.exists():
@@ -857,7 +876,7 @@ elif PAGES[page] == "betting":
     fig.update_layout(height=300, xaxis_tickformat=".0%", margin=dict(t=20, b=30, l=120, r=40),
                       paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family="Inter", size=12))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Recommendations
     st.markdown('<p class="section-header">💡 Recommended Bets</p>', unsafe_allow_html=True)
@@ -892,7 +911,7 @@ elif PAGES[page] == "betting":
             "Model": f"{r['model_p']:.1%}", "Implied": f"{r['implied']:.1%}",
             "Edge": f"{r['edge']:+.1%}"
         } for r in rows])
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.dataframe(df, width="stretch", hide_index=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: COMMENTARY
@@ -985,7 +1004,7 @@ elif PAGES[page] == "historical":
                       paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family="Inter", size=11))
     fig.update_xaxes(tickangle=-45)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Distribution
     st.markdown('<p class="section-header">📈 Total points distribution</p>', unsafe_allow_html=True)
@@ -997,14 +1016,14 @@ elif PAGES[page] == "historical":
     fig.update_layout(height=300, xaxis_title="Total points", yaxis_title="Games",
                       margin=dict(t=20, b=30), paper_bgcolor="rgba(0,0,0,0)",
                       plot_bgcolor="rgba(0,0,0,0)", font=dict(family="Inter", size=11))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Recent results
     with st.expander("📋 All 63 historical Finals games"):
         display = games[["SEASON", "TEAM_ABBREVIATION", "OPP_TEAM_ABBREVIATION", "PTS", "OPP_PTS",
                           "TOTAL_POINTS", "MARGIN", "PACE"]].copy()
         display.columns = ["Season", "Team", "Opp", "PTS", "OPP_PTS", "Total", "Margin", "Pace"]
-        st.dataframe(display.round(1), use_container_width=True)
+        st.dataframe(display.round(1), width="stretch")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: METHODOLOGY
@@ -1035,13 +1054,13 @@ elif PAGES[page] == "methodology":
         fig.update_layout(showlegend=False, height=320, margin=dict(t=40, b=20),
                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                           font=dict(family="Inter", size=11))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         st.markdown('<p class="section-header">Top 10 configurations</p>', unsafe_allow_html=True)
         top10 = exp.nsmallest(10, "combined_score")[["margin_rmse", "total_rmse", "win_accuracy",
                                                        "recency_decay", "playoff_weight", "use_opp_adjustment",
                                                        "prior_precision", "n_features", "feature_cols"]]
-        st.dataframe(top10, use_container_width=True, hide_index=True)
+        st.dataframe(top10, width="stretch", hide_index=True)
 
     st.markdown('<p class="section-header">Current best config</p>', unsafe_allow_html=True)
     best = load_best_config_json()
@@ -1061,7 +1080,7 @@ elif PAGES[page] == "methodology":
 st.markdown("""
 <div class="footer">
     NBA Finals 2026 Prediction Engine · Built with Streamlit ·
-    <a href="https://github.com" target="_blank">View source</a> ·
+    <a href="https://github.com/RRGU26/nbafinals" target="_blank">View source on GitHub</a> ·
     Not financial advice
 </div>
 """, unsafe_allow_html=True)

@@ -1,26 +1,29 @@
 # Deployment Guide
 
-The dashboard is a Streamlit app. Three deployment options, ordered easiest → most control:
+Three deployment options, ordered easiest → most control:
 
-## Option 1: Streamlit Community Cloud (free, public, recommended)
+## Option 1: Streamlit Community Cloud (free, public — recommended)
 
-1. Push this directory to a public GitHub repo:
-   ```bash
-   cd /Users/rr/nba-finals-2026
-   git init && git add . && git commit -m "Initial dashboard"
-   gh repo create RRGU26/nba-finals-2026 --public --source=. --push
+The repo is already at https://github.com/RRGU26/nbafinals.
+
+1. Go to **https://share.streamlit.io** and sign in with GitHub
+2. Click "New app"
+3. Configure:
+   - **Repository:** `RRGU26/nbafinals`
+   - **Branch:** `main`
+   - **Main file path:** `app.py`
+   - **Python version:** 3.11
+4. (Optional) For live betting odds, click **Advanced settings → Secrets** and add:
+   ```toml
+   ODDS_API_KEY = "your-odds-api-key-here"
    ```
+   The dashboard works without this — only the Betting page is affected.
+5. Click **Deploy**. You'll get a URL like `https://nbafinals.streamlit.app`
 
-2. Go to https://share.streamlit.io → "New app"
-3. Connect your GitHub, select the repo, set:
-   - Main file: `app.py`
-   - Python version: 3.10+
-4. Click Deploy. You'll get a URL like `https://nba-finals-2026.streamlit.app`
-
-**Caveats:**
-- Public — anyone with the URL can see it (no auth on free tier)
-- Needs to be a public GitHub repo
-- The Odds API key (used in `recommend_bet.py`) is in `nba-trader/.env` — if you want live odds in the deployed app, copy that key into the Streamlit Cloud **Secrets** panel and update the betting page to read from `st.secrets`
+Streamlit Cloud will:
+- Install dependencies from `requirements.txt` (already in the repo)
+- Auto-restart on `git push` to `main`
+- Provide free TLS and a custom subdomain
 
 ## Option 2: Run locally (no deployment)
 
@@ -31,28 +34,35 @@ uv run streamlit run app.py
 
 Opens at http://localhost:8501. Stop with `Ctrl+C`.
 
-To expose on your local network:
+To expose on your local network (so phones can see it):
 ```bash
 uv run streamlit run app.py --server.address 0.0.0.0
 ```
 Then anyone on your wifi can hit `http://<your-mac-ip>:8501`.
 
+For live odds locally:
+```bash
+ODDS_API_KEY=your-key uv run streamlit run app.py
+```
+
 ## Option 3: Docker (for any cloud)
 
+Create `Dockerfile`:
 ```dockerfile
 FROM python:3.11-slim
 WORKDIR /app
-COPY pyproject.toml uv.lock ./
-RUN pip install uv && uv sync --frozen
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8501
-CMD ["uv", "run", "streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
+ENTRYPOINT ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=8501"]
 ```
 
 Build & run:
 ```bash
-docker build -t nba-finals-2026 .
-docker run -p 8501:8501 nba-finals-2026
+docker build -t nbafinals .
+docker run -p 8501:8501 -e ODDS_API_KEY=your-key nbafinals
 ```
 
 Deploy to anywhere that runs Docker (Fly.io, Railway, Render, GCP Cloud Run, AWS ECS).
@@ -64,16 +74,20 @@ After each game completes:
 
 ```bash
 cd /Users/rr/nba-finals-2026
-uv run python fetch_data.py        # pulls new boxscore
-uv run python autoresearch.py 400  # optional: re-train (takes ~5 min)
-uv run python series_sim.py        # re-simulates remaining games
+uv run python fetch_data.py        # pulls new boxscore (~30 sec)
+uv run python series_sim.py        # re-simulates remaining games (~10 sec)
+git add -A && git commit -m "Update after Game N" && git push
 ```
 
-If deployed on Streamlit Cloud: push the updated parquet/json files to GitHub
-and the app redeploys automatically. Alternative: add a `cron` job on your
-local machine that pushes nightly.
+Streamlit Cloud will auto-redeploy on push.
 
-## Auto-refresh setup (recommended)
+For deeper updates (re-train the model):
+```bash
+uv run python autoresearch.py 500  # ~5 min — re-runs the search
+uv run python series_sim.py
+```
+
+## Auto-refresh setup
 
 Add to `~/.openclaw/cron/jobs.json` (or system cron):
 
@@ -81,8 +95,15 @@ Add to `~/.openclaw/cron/jobs.json` (or system cron):
 {
   "name": "nba-finals-refresh",
   "cron": "0 6 * * *",
-  "command": "cd /Users/rr/nba-finals-2026 && uv run python fetch_data.py && uv run python series_sim.py"
+  "command": "cd /Users/rr/nba-finals-2026 && uv run python fetch_data.py && uv run python series_sim.py && git add -A && git commit -m 'Daily refresh' && git push"
 }
 ```
 
-Runs every morning at 6am, so the dashboard reflects yesterday's game when you wake up.
+Runs every morning at 6am, so the dashboard reflects yesterday's game.
+
+## Troubleshooting
+
+- **"No live odds"** on betting page: Add your `ODDS_API_KEY` to secrets/env
+- **Streamlit Cloud build fails**: Check Python version is 3.11, requirements.txt is current
+- **Data is stale**: Run `fetch_data.py` and push the updated parquet files
+- **Model predictions look wrong**: Re-run `autoresearch.py 400` to refresh best_config.json
