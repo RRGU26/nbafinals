@@ -21,6 +21,7 @@ PAGES = [
     "📊 Overview",
     "🎯 Game Predictions",
     "💰 Betting Analysis",
+    "📈 Track Record",
     "📝 Commentary",
     "📚 Historical Finals",
     "🔬 Methodology",

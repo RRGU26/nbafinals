@@ -369,6 +369,7 @@ with st.sidebar:
         "📊 Overview": "overview",
         "🎯 Game Predictions": "games",
         "💰 Betting Analysis": "betting",
+        "📈 Track Record": "scorecard",
         "📝 Commentary": "commentary",
         "📚 Historical Finals": "historical",
         "🔬 Methodology": "methodology",
@@ -964,6 +965,134 @@ elif PAGES[page] == "betting":
             "Edge": f"{r['edge']:+.1%}"
         } for r in rows])
         st.dataframe(df, width="stretch", hide_index=True)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PAGE: TRACK RECORD (predictions vs actuals)
+# ─────────────────────────────────────────────────────────────────────────────
+elif PAGES[page] == "scorecard":
+    st.markdown('<p class="hero-title" style="color:#1a1a1a; font-size: 2.2rem;">📈 Track Record</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #6b7280;">Pre-game predictions scored against actual results as the series unfolds</p>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    sc_path = LOG_DIR / "scorecard.json"
+    if not sc_path.exists():
+        st.info("No predictions tracked yet. Run `uv run python scorecard.py snapshot --game 1` "
+                "before Game 1 tips, then `uv run python scorecard.py score` after each game.", icon="📋")
+        st.markdown("""
+        ### How tracking works
+        1. **Before each game** — snapshot the model's prediction:
+           ```bash
+           uv run python scorecard.py snapshot --game N
+           ```
+        2. **After the game** — score it against the actual result:
+           ```bash
+           uv run python scorecard.py score
+           ```
+        3. Refresh this page to see the accumulated track record.
+
+        Each snapshot captures the **consensus prediction**, plus the individual Analytic
+        and Bayesian predictions, so we can see which model performs better as the series unfolds.
+        """)
+        st.stop()
+
+    with open(sc_path) as f:
+        sc = json.load(f)
+
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+    if sc["n_games_scored"] > 0:
+        for i, (label, val, sub) in enumerate([
+            ("Games Scored", str(sc["n_games_scored"]), f"{sc['n_games_pending']} pending"),
+            ("Win Accuracy", f"{sc['win_accuracy']:.0%}",
+             "of games called correctly" if sc["n_games_scored"] > 0 else ""),
+            ("Margin RMSE", f"{sc['margin_rmse']:.1f}", "avg error in pts"),
+            ("Total RMSE", f"{sc['total_rmse']:.1f}", "avg error in pts"),
+        ]):
+            with [col1, col2, col3, col4][i]:
+                st.markdown(f"""
+                <div style="background: white; padding: 1.2rem; border-radius: 12px;
+                            border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.75rem; color: #6b7280;
+                                text-transform: uppercase; letter-spacing: 0.08em;">{label}</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: #111827; line-height: 1;">{val}</div>
+                    <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 0.4rem;">{sub}</div>
+                </div>
+                """, unsafe_allow_html=True)
+    else:
+        st.info("Snapshots taken but no games have completed yet.", icon="⏳")
+
+    # Per-game table
+    if sc["games"]:
+        st.markdown('<p class="section-header">Game-by-game</p>', unsafe_allow_html=True)
+        rows = []
+        for g in sc["games"]:
+            if g.get("scored"):
+                rows.append({
+                    "Game": g["game_num"],
+                    "Matchup": f"{g['away_team']} @ {g['home_team']}",
+                    "Predicted (home)": f"{g['predicted_margin_home']:+.1f}",
+                    "Actual": f"{g['actual_margin']:+d}",
+                    "Margin Error": f"{g['margin_error']:+.1f}",
+                    "Predicted Total": f"{g['predicted_total']:.0f}",
+                    "Actual Total": str(g['actual_total']),
+                    "Win Pred": "✅" if g['win_pred_correct'] else "❌",
+                })
+            else:
+                rows.append({
+                    "Game": g["game_num"],
+                    "Matchup": f"{g['away_team']} @ {g['home_team']}",
+                    "Predicted (home)": f"{g['predicted_margin_home']:+.1f}",
+                    "Actual": "—",
+                    "Margin Error": "—",
+                    "Predicted Total": f"{g['predicted_total']:.0f}",
+                    "Actual Total": "—",
+                    "Win Pred": "⏳",
+                })
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+
+    # Chart: predicted vs actual margin
+    scored = [g for g in sc["games"] if g.get("scored")]
+    if len(scored) > 0:
+        st.markdown('<p class="section-header">Predicted vs actual margin</p>', unsafe_allow_html=True)
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=[f"G{g['game_num']}" for g in scored],
+            y=[g['predicted_margin_home'] for g in scored],
+            name="Predicted",
+            marker_color=NYK_PRIMARY,
+            text=[f"{g['predicted_margin_home']:+.1f}" for g in scored],
+            textposition="outside",
+        ))
+        fig.add_trace(go.Bar(
+            x=[f"G{g['game_num']}" for g in scored],
+            y=[g['actual_margin'] for g in scored],
+            name="Actual",
+            marker_color="#F58426",
+            text=[f"{g['actual_margin']:+d}" for g in scored],
+            textposition="outside",
+        ))
+        fig.update_layout(barmode="group", height=400,
+                          yaxis_title="Margin (home view)",
+                          margin=dict(t=20, b=30),
+                          paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                          font=dict(family="Inter", size=12))
+        fig.add_hline(y=0, line_color="#374151")
+        st.plotly_chart(fig, width="stretch")
+
+        # Model comparison
+        st.markdown('<p class="section-header">Which model is performing better?</p>', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Analytic RMSE", f"{sc['analytic_margin_rmse']:.1f}",
+                       delta=f"{sc['analytic_margin_rmse'] - sc['margin_rmse']:+.1f} vs consensus",
+                       delta_color="inverse")
+        with col2:
+            st.metric("Bayesian RMSE", f"{sc['bayesian_margin_rmse']:.1f}",
+                       delta=f"{sc['bayesian_margin_rmse'] - sc['margin_rmse']:+.1f} vs consensus",
+                       delta_color="inverse")
+
+    st.markdown(f'<p style="color: #6b7280; font-size: 0.85rem; margin-top: 2rem;">Last updated: {sc["updated_at"][:19]}</p>', unsafe_allow_html=True)
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: COMMENTARY

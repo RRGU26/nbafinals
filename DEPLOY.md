@@ -67,6 +67,28 @@ docker run -p 8501:8501 -e ODDS_API_KEY=your-key nbafinals
 
 Deploy to anywhere that runs Docker (Fly.io, Railway, Render, GCP Cloud Run, AWS ECS).
 
+## Tracking prediction accuracy
+
+The Track Record page shows predicted vs actual margins/totals/win-calls
+as the series progresses.
+
+**Before each game (snapshots the current prediction):**
+```bash
+uv run python scorecard.py snapshot --game 1
+```
+
+**After each game completes (scores against actual result):**
+```bash
+uv run python fetch_data.py             # pull latest box score
+uv run python scorecard.py score        # score all snapshots
+```
+
+The scorecard accumulates across all 7 games and shows:
+- Win prediction accuracy
+- Margin RMSE
+- Total RMSE
+- Which model (Analytic vs Bayesian) is performing better
+
 ## Updating data after each Finals game
 
 The dashboard reads from `data/team_games.parquet` and `logs/series_simulation.json`.
