@@ -826,7 +826,39 @@ elif PAGES[page] == "betting":
     over = best_price("totals", lambda o: o["name"] == "Over")
     under = best_price("totals", lambda o: o["name"] == "Under")
 
-    st.markdown(f'<p class="section-header">{away_full} @ {home_full}</p>', unsafe_allow_html=True)
+    # Parse commence_time (ISO 8601 from Odds API)
+    game_date_str = ""
+    game_time_str = ""
+    if "commence_time" in game:
+        try:
+            from datetime import datetime, timezone
+            import zoneinfo
+            dt = datetime.fromisoformat(game["commence_time"].replace("Z", "+00:00"))
+            # Convert to US Eastern for display
+            try:
+                et = dt.astimezone(zoneinfo.ZoneInfo("America/New_York"))
+                game_date_str = et.strftime("%A, %B %-d, %Y")
+                game_time_str = et.strftime("%-I:%M %p ET")
+            except Exception:
+                game_date_str = dt.strftime("%A, %B %-d, %Y")
+                game_time_str = dt.strftime("%-I:%M %p UTC")
+        except Exception:
+            pass
+
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+                padding: 1.25rem 1.5rem; border-radius: 14px; border-left: 4px solid #006BB6;
+                margin: 1rem 0;">
+        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;
+                    letter-spacing: 0.1em; font-weight: 600;">Game Details</div>
+        <div style="font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0.25rem 0;">
+            {away_full} @ {home_full}
+        </div>
+        <div style="font-size: 1rem; color: #374151;">
+            {f"<b>🗓️ {game_date_str}</b> · ⏰ {game_time_str}" if game_date_str else ""}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     if not sim:
         st.error("No simulation. Run `series_sim.py`.")
@@ -956,12 +988,58 @@ elif PAGES[page] == "commentary":
     sas_form = team_features(TEAM_IDS["SAS"], as_of, team_games, baselines, config)
     nyk_form = team_features(TEAM_IDS["NYK"], as_of, team_games, baselines, config)
 
-    tab1, tab2, tab3 = st.tabs(["📰 Series Outlook", "⚔️ Matchup Analysis", "🎮 Game Previews"])
+    tab0, tab1, tab2, tab3 = st.tabs(["🧠 How the Models Work", "📰 Series Outlook", "⚔️ Matchup Analysis", "🎮 Game Previews"])
 
     def md_to_html(text: str) -> str:
         """Convert **bold** to <b>bold</b> for HTML rendering."""
         import re
         return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+
+    with tab0:
+        st.markdown("""
+        <div class="commentary-block">
+        Every prediction on this page is the <b>average of two independent models</b> trained on the same data but with different philosophies:
+        </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2, gap="medium")
+        with col1:
+            st.markdown("""
+            <div style="padding: 1.5rem; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+                        border-radius: 12px; border-left: 4px solid #006BB6; height: 100%;">
+                <div style="font-size: 0.75rem; color: #1e40af; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Model 1</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a; margin-top: 0.25rem;">Analytic (Power Rating)</div>
+                <p style="margin-top: 0.75rem; color: #1f2937; line-height: 1.6;">
+                The textbook NBA formula:<br>
+                <code style="background: white; padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.85rem; display: inline-block; margin: 0.4rem 0;">margin = home_court + (home_net − away_net)</code><br>
+                Calibrated against <b>11 seasons of historical Finals data</b> (home court value 4.6 pts, total points 211 avg).
+                Strong baseline; no learning needed.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+            <div style="padding: 1.5rem; background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+                        border-radius: 12px; border-left: 4px solid #F58426; height: 100%;">
+                <div style="font-size: 0.75rem; color: #9a3412; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Model 2</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #7c2d12; margin-top: 0.25rem;">Bayesian Regression</div>
+                <p style="margin-top: 0.75rem; color: #1f2937; line-height: 1.6;">
+                Linear regression with conjugate Normal-InverseGamma prior, trained on all 196 NYK/SAS team-games this season.
+                Features selected by <b>autoresearch (1500 experiments)</b>:
+                <code style="background: white; padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.85rem; display: inline-block; margin: 0.4rem 0;">is_home + net_diff + pace_avg</code><br>
+                Captures team-specific patterns the analytic model misses.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="commentary-block">
+        <b>Why combine them?</b> Each model has different blind spots. The analytic is conservative and trustworthy on average but doesn't see opponent-specific patterns. The Bayesian sees patterns but can over-fit on a small playoff sample.
+        <br><br>
+        When they <b>agree</b>, the prediction is high-confidence. When they <b>disagree</b> by more than 5 points (like Game 1: Analytic says NYK by 2, Bayesian says SAS by 11), the consensus is shown with explicit uncertainty so you don't bet a number both models can't validate.
+        </div>
+        """, unsafe_allow_html=True)
 
     with tab1:
         st.markdown(f'<div class="commentary-block">{md_to_html(series_overview(sim))}</div>', unsafe_allow_html=True)
@@ -970,13 +1048,10 @@ elif PAGES[page] == "commentary":
         st.markdown(f'<div class="commentary-block">{md_to_html(matchup_analysis(nyk_form, sas_form, "Knicks", "Spurs"))}</div>', unsafe_allow_html=True)
 
     with tab3:
-        # Show only unique games (G1+G2 same prediction; just show distinct combos)
-        seen = set()
+        # Show ALL 7 games — even repeated matchups (G1+G2 both at SAS, etc.)
+        # are distinct because of rest patterns, series momentum, and game-#
+        # context that affect betting decisions.
         for g in sim["per_game"]:
-            key = f"{g['home']}_{g['away']}"
-            if key in seen:
-                continue
-            seen.add(key)
             st.markdown(f'<div class="commentary-block">{md_to_html(game_commentary(g))}</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
