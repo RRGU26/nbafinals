@@ -919,11 +919,16 @@ elif PAGES[page] == "commentary":
 
     tab1, tab2, tab3 = st.tabs(["📰 Series Outlook", "⚔️ Matchup Analysis", "🎮 Game Previews"])
 
+    def md_to_html(text: str) -> str:
+        """Convert **bold** to <b>bold</b> for HTML rendering."""
+        import re
+        return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+
     with tab1:
-        st.markdown(f'<div class="commentary-block">{series_overview(sim)}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="commentary-block">{md_to_html(series_overview(sim))}</div>', unsafe_allow_html=True)
 
     with tab2:
-        st.markdown(f'<div class="commentary-block">{matchup_analysis(nyk_form, sas_form, "Knicks", "Spurs")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="commentary-block">{md_to_html(matchup_analysis(nyk_form, sas_form, "Knicks", "Spurs"))}</div>', unsafe_allow_html=True)
 
     with tab3:
         # Show only unique games (G1+G2 same prediction; just show distinct combos)
@@ -933,7 +938,7 @@ elif PAGES[page] == "commentary":
             if key in seen:
                 continue
             seen.add(key)
-            st.markdown(f'<div class="commentary-block">{game_commentary(g)}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="commentary-block">{md_to_html(game_commentary(g))}</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: HISTORICAL FINALS
