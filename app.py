@@ -373,7 +373,14 @@ with st.sidebar:
         "📚 Historical Finals": "historical",
         "🔬 Methodology": "methodology",
     }
-    page = st.radio("Page", list(PAGES.keys()), label_visibility="collapsed")
+    # Use session_state so top-of-page nav can sync with sidebar
+    if "selected_page" not in st.session_state:
+        st.session_state.selected_page = list(PAGES.keys())[0]
+    page = st.radio("Page", list(PAGES.keys()),
+                     index=list(PAGES.keys()).index(st.session_state.selected_page),
+                     label_visibility="collapsed",
+                     key="sidebar_nav")
+    st.session_state.selected_page = page
 
     st.markdown("---")
 
@@ -418,6 +425,18 @@ with st.sidebar:
         pass
 
     st.markdown('<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 1.5rem;">Built with Streamlit · Not financial advice</div>', unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TOP NAV (visible even when sidebar is collapsed — mobile fallback)
+# ─────────────────────────────────────────────────────────────────────────────
+nav_cols = st.columns(len(PAGES))
+for i, p in enumerate(PAGES.keys()):
+    with nav_cols[i]:
+        is_active = (p == page)
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(p, key=f"topnav_{i}", type=btn_type, width="stretch"):
+            st.session_state.selected_page = p
+            st.rerun()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: OVERVIEW
