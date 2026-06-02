@@ -633,11 +633,15 @@ if PAGES[page] == "overview":
                                     fill="toself", name="Spurs",
                                     line_color="#4A5258", fillcolor="rgba(74, 82, 88, 0.25)"))
     fig.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 100], showticklabels=False, gridcolor="#e5e7eb"),
-                     angularaxis=dict(gridcolor="#e5e7eb")),
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100], showticklabels=False, gridcolor="#e5e7eb"),
+            angularaxis=dict(gridcolor="#e5e7eb", tickfont=dict(size=12)),
+            domain=dict(x=[0.1, 0.9], y=[0.05, 0.95]),  # leave room for labels
+        ),
         showlegend=True,
-        height=420,
-        margin=dict(t=20, b=20, l=40, r=40),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5),
+        height=480,
+        margin=dict(t=60, b=60, l=80, r=80),  # generous margins so polar labels never clip
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter, sans-serif", size=13),
     )
