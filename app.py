@@ -957,6 +957,92 @@ elif PAGES[page] == "betting":
             </div>
             """, unsafe_allow_html=True)
 
+    # Line movement
+    line_hist_path = LOG_DIR / "line_history.jsonl"
+    if line_hist_path.exists():
+        hist_rows = []
+        with open(line_hist_path) as f:
+            for line in f:
+                try:
+                    hist_rows.append(json.loads(line))
+                except Exception:
+                    continue
+        if hist_rows:
+            hist_df = pd.DataFrame(hist_rows)
+            hist_df["captured_at"] = pd.to_datetime(hist_df["captured_at"])
+            hist_df = hist_df.sort_values("captured_at")
+
+            st.markdown('<p class="section-header">📊 Line Movement (Sharp Money Signal)</p>', unsafe_allow_html=True)
+            st.markdown(
+                f'<p class="section-sub">{len(hist_df)} snapshots over '
+                f'{(hist_df["captured_at"].max() - hist_df["captured_at"].min()).total_seconds()/3600:.1f}h. '
+                f'Lines moving 1+ pts before tipoff = sharp money positioning.</p>',
+                unsafe_allow_html=True)
+
+            # Open → current deltas
+            first, last = hist_df.iloc[0], hist_df.iloc[-1]
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                d_spread = (last["home_spread_point"] or 0) - (first["home_spread_point"] or 0)
+                color = "#10b981" if abs(d_spread) >= 1.0 else "#6b7280"
+                arrow = "→" if abs(d_spread) < 0.1 else ("↑" if d_spread > 0 else "↓")
+                st.markdown(f"""
+                <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Spread move</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: {color};">
+                        {first['home_spread_point']:+.1f} {arrow} {last['home_spread_point']:+.1f}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Δ {d_spread:+.2f} pts</div>
+                </div>
+                """, unsafe_allow_html=True)
+            with col2:
+                d_total = (last["total_point"] or 0) - (first["total_point"] or 0)
+                color = "#10b981" if abs(d_total) >= 1.5 else "#6b7280"
+                arrow = "→" if abs(d_total) < 0.1 else ("↑" if d_total > 0 else "↓")
+                st.markdown(f"""
+                <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Total move</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: {color};">
+                        {first['total_point']:.1f} {arrow} {last['total_point']:.1f}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Δ {d_total:+.2f} pts</div>
+                </div>
+                """, unsafe_allow_html=True)
+            with col3:
+                # Sharp interpretation
+                interp = ""
+                if abs(d_spread) >= 1.0:
+                    side = home_short if d_spread < 0 else away_short
+                    interp = f"🎯 Sharp on {side}"
+                elif abs(d_spread) >= 0.5:
+                    side = home_short if d_spread < 0 else away_short
+                    interp = f"↗ Mild lean {side}"
+                else:
+                    interp = "Quiet market"
+                st.markdown(f"""
+                <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Signal</div>
+                    <div style="font-size: 1.3rem; font-weight: 700; color: #111827;">{interp}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Time series chart
+            fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+                                  subplot_titles=("Home spread over time", "Total points over time"),
+                                  vertical_spacing=0.15)
+            fig.add_trace(go.Scatter(x=hist_df["captured_at"], y=hist_df["home_spread_point"],
+                                       mode="lines+markers", marker=dict(size=8, color=NYK_PRIMARY),
+                                       line=dict(width=2, color=NYK_PRIMARY), name="Spread"),
+                           row=1, col=1)
+            fig.add_trace(go.Scatter(x=hist_df["captured_at"], y=hist_df["total_point"],
+                                       mode="lines+markers", marker=dict(size=8, color="#F58426"),
+                                       line=dict(width=2, color="#F58426"), name="Total"),
+                           row=2, col=1)
+            fig.update_layout(height=420, showlegend=False, margin=dict(t=50, b=30),
+                              paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                              font=dict(family="Inter", size=11))
+            st.plotly_chart(fig, width="stretch")
+
     # Full table
     with st.expander("📋 All markets detail"):
         df = pd.DataFrame([{

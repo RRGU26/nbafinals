@@ -1,0 +1,46 @@
+name: Track Vegas line movement
+
+on:
+  schedule:
+    # Every 30 minutes, but only roughly 10am-11pm ET (14:00-03:00 UTC).
+    # NBA Finals games typically tip around 8-9pm ET; we want hourly snapshots
+    # for ~6 hours before tipoff and right up until close.
+    - cron: "*/30 14-23 * * *"
+    - cron: "*/30 0-3 * * *"
+  workflow_dispatch: {}  # allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install -q numpy pandas scipy requests nba_api pyarrow
+
+      - name: Snapshot lines
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python track_lines.py snapshot || echo "No game in slate, skipping"
+
+      - name: Commit history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet logs/line_history.jsonl 2>/dev/null; then
+            git add logs/line_history.jsonl
+            git commit -m "Line snapshot $(date -u +%Y-%m-%dT%H:%M)"
+            git push
+          else
+            echo "No change to commit"
+          fi
