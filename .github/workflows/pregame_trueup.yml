@@ -1,0 +1,152 @@
+name: Pre-game true-up (T-3h)
+
+# Runs at 5:30 PM ET daily (21:30 UTC during EDT, June-November).
+# 3 hours before typical 8:30 PM ET tipoff. This is THE recommendation
+# moment — final data refresh, final prediction snapshot, final odds capture.
+#
+# No-ops on non-game days (no NYK-SAS game in the odds slate).
+on:
+  schedule:
+    - cron: "30 21 * * *"   # 5:30 PM ET (EDT)
+  workflow_dispatch:
+    inputs:
+      game_num:
+        description: "Game number (1-7). Leave blank to auto-detect."
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  trueup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -q numpy pandas scipy requests nba_api pyarrow
+
+      - name: Check if game in next 6 hours
+        id: check
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          IS_GAME_TODAY=$(python -c "
+          from datetime import datetime, timezone
+          from odds import fetch_nba_odds, find_game
+          odds = fetch_nba_odds()
+          if not odds:
+              print('false'); exit()
+          g = find_game(odds, 'Spurs', 'Knicks') or find_game(odds, 'Knicks', 'Spurs')
+          if not g or not g.get('commence_time'):
+              print('false'); exit()
+          ct = datetime.fromisoformat(g['commence_time'].replace('Z', '+00:00'))
+          delta_hours = (ct - datetime.now(timezone.utc)).total_seconds() / 3600
+          print('true' if 0 <= delta_hours <= 6 else 'false')
+          ")
+          echo "is_game=$IS_GAME_TODAY" >> $GITHUB_OUTPUT
+          echo "Game tonight (T <= 6h): $IS_GAME_TODAY"
+
+      - name: Determine game number
+        if: steps.check.outputs.is_game == 'true'
+        id: game
+        run: |
+          GAME_NUM="${{ github.event.inputs.game_num }}"
+          if [ -z "$GAME_NUM" ]; then
+            GAME_NUM=$(python -c "
+          import pandas as pd
+          from pathlib import Path
+          p = Path('data/team_games.parquet')
+          if not p.exists():
+              print(1); exit()
+          df = pd.read_parquet(p)
+          finals = df[df['GAME_ID'].str.contains('004250040')]
+          print(finals['GAME_ID'].nunique() + 1)
+            ")
+          fi
+          echo "game_num=$GAME_NUM" >> $GITHUB_OUTPUT
+
+      - name: Refresh data
+        if: steps.check.outputs.is_game == 'true'
+        run: python fetch_data.py
+
+      - name: Re-simulate with latest evidence
+        if: steps.check.outputs.is_game == 'true'
+        run: python series_sim.py
+
+      - name: Snapshot FINAL prediction (T-3h)
+        if: steps.check.outputs.is_game == 'true'
+        run: |
+          if [ "${{ steps.game.outputs.game_num }}" -le "7" ]; then
+            python scorecard.py snapshot --game ${{ steps.game.outputs.game_num }}
+          fi
+
+      - name: Capture odds + line for T-3h marker
+        if: steps.check.outputs.is_game == 'true'
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python track_lines.py snapshot
+          python -c "
+          import json
+          from odds import fetch_nba_odds, find_game
+          odds = fetch_nba_odds()
+          game = find_game(odds, 'Spurs', 'Knicks') or find_game(odds, 'Knicks', 'Spurs') if odds else None
+          if game:
+              with open('logs/last_odds_snapshot.json', 'w') as f:
+                  json.dump(game, f, indent=2)
+              print('Cached final T-3h odds')
+          "
+
+      - name: Write recommendation summary
+        if: steps.check.outputs.is_game == 'true'
+        run: |
+          python -c "
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          with open('logs/series_simulation.json') as f:
+              sim = json.load(f)
+          with open('logs/last_odds_snapshot.json') as f:
+              game = json.load(f)
+
+          game_num = ${{ steps.game.outputs.game_num }}
+          per_game = sim['per_game'][game_num - 1]
+
+          out = {
+              'generated_at': datetime.now(timezone.utc).isoformat(),
+              'game_num': game_num,
+              'matchup': f\"{per_game['away']} @ {per_game['home']}\",
+              'tipoff': game.get('commence_time'),
+              'model': {
+                  'home_win_prob': per_game['home_win_prob'],
+                  'nyk_win_prob': per_game['nyk_win_prob'],
+                  'predicted_margin': per_game['predicted_margin_home'],
+                  'predicted_total': per_game['predicted_total'],
+              },
+          }
+          Path('logs').mkdir(exist_ok=True)
+          with open(f'logs/trueup_game_{game_num}.json', 'w') as f:
+              json.dump(out, f, indent=2)
+          print(json.dumps(out, indent=2))
+          "
+
+      - name: Commit true-up
+        if: steps.check.outputs.is_game == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ logs/
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "T-3h true-up Game ${{ steps.game.outputs.game_num }}"
+            git push
+          fi
+
+      - name: No game today
+        if: steps.check.outputs.is_game == 'false'
+        run: echo "No NYK-SAS game in the next 6 hours, skipping true-up"

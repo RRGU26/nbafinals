@@ -886,6 +886,27 @@ elif PAGES[page] == "betting":
     over = best_price("totals", lambda o: o["name"] == "Over")
     under = best_price("totals", lambda o: o["name"] == "Under")
 
+    # Show T-3h true-up if available for the current game
+    trueup_files = sorted(LOG_DIR.glob("trueup_game_*.json"))
+    if trueup_files:
+        with open(trueup_files[-1]) as f:
+            trueup = json.load(f)
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+                    padding: 0.85rem 1.2rem; border-radius: 12px;
+                    border-left: 4px solid #F58426; margin-bottom: 1rem;
+                    display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 0.75rem; color: #92400e; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">
+                    🎯 T-3h Locked Recommendation · Game {trueup['game_num']}
+                </div>
+                <div style="font-size: 0.85rem; color: #7c2d12; margin-top: 0.2rem;">
+                    Captured: {trueup['generated_at'][:16].replace('T', ' ')} UTC
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # Parse commence_time (ISO 8601 from Odds API)
     game_date_str = ""
     game_time_str = ""
