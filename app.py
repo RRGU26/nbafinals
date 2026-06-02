@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="NBA Finals 2026 · NYK vs SAS",
     page_icon="🏀",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",  # auto = expanded on desktop, collapsed on mobile
 )
 
 # Brand colors
@@ -267,6 +267,7 @@ header {visibility: hidden;}
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] {
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 8px 8px 0 0;
@@ -276,6 +277,56 @@ header {visibility: hidden;}
 .stTabs [aria-selected="true"] {
     background: #006BB6 !important;
     color: white !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   MOBILE RESPONSIVE — viewport <= 700px
+   ────────────────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+    .block-container { padding: 0.5rem 0.75rem !important; }
+
+    /* Hero shrinks */
+    .hero { padding: 1.25rem 1rem; border-radius: 14px; }
+    .hero-title { font-size: 1.7rem !important; }
+    .hero-sub { font-size: 0.9rem !important; }
+    .hero-stat { font-size: 0.7rem !important; }
+    .hero > div > div > div:last-child { text-align: left !important; margin-top: 0.75rem; }
+    .hero > div > div { flex-direction: column !important; align-items: flex-start !important; }
+
+    /* Team cards stack and shrink */
+    .team-card { min-height: 0; padding: 1.1rem; }
+    .team-name { font-size: 1.1rem; }
+    .team-record { font-size: 2.2rem; }
+    .team-playoff { font-size: 1.1rem; }
+    .team-stat-value { font-size: 1rem; }
+
+    /* Section headers */
+    .section-header { font-size: 1.2rem; margin: 1.2rem 0 0.4rem 0; }
+    .section-sub { font-size: 0.85rem; }
+
+    /* Commentary blocks */
+    .commentary-block { padding: 1rem; font-size: 0.95rem; }
+
+    /* Bet rows */
+    .bet-row { padding: 0.75rem; }
+    .bet-name { font-size: 0.95rem; }
+    .bet-edge { font-size: 1.2rem; }
+
+    /* Top-nav buttons: allow horizontal scroll on mobile */
+    [data-testid="stHorizontalBlock"]:first-of-type {
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+        gap: 0.25rem;
+    }
+    [data-testid="stHorizontalBlock"]:first-of-type button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.5rem;
+        white-space: nowrap;
+        min-width: auto;
+    }
+
+    /* Generic plotly chart */
+    .stPlotlyChart { margin: 0 -0.5rem; }
 }
 </style>
 """, unsafe_allow_html=True)
