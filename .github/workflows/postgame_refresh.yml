@@ -1,0 +1,50 @@
+name: Post-game data refresh
+
+# Runs every morning at 7am ET / 11am UTC. If a Finals game finished the
+# night before, nba_api will have the boxscore. This pulls it, scores any
+# pending prediction snapshots, re-simulates remaining games, and commits.
+on:
+  schedule:
+    - cron: "0 11 * * *"   # 7am ET daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -q numpy pandas scipy requests nba_api pyarrow
+
+      - name: Fetch latest games
+        run: python fetch_data.py
+
+      - name: Score any pending predictions
+        run: python scorecard.py score || echo "No snapshots to score yet"
+
+      - name: Re-simulate remaining games
+        run: python series_sim.py
+
+      - name: Close open bets (snapshot closing lines)
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python clv.py close || echo "No open bets to close"
+
+      - name: Commit refresh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ logs/
+          if git diff --staged --quiet; then
+            echo "No data changes"
+          else
+            git commit -m "Post-game refresh $(date -u +%Y-%m-%d)"
+            git push
+          fi

@@ -33,14 +33,31 @@ jobs:
         run: |
           python track_lines.py snapshot || echo "No game in slate, skipping"
 
-      - name: Commit history
+      - name: Cache odds snapshot for Betting page
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python -c "
+          import json
+          from odds import fetch_nba_odds, find_game
+          odds = fetch_nba_odds()
+          game = find_game(odds, 'Spurs', 'Knicks') or find_game(odds, 'Knicks', 'Spurs') if odds else None
+          if game:
+              with open('logs/last_odds_snapshot.json', 'w') as f:
+                  json.dump(game, f, indent=2)
+              print('Cached current odds')
+          else:
+              print('No NYK-SAS odds in slate')
+          " || echo "Odds cache skipped"
+
+      - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet logs/line_history.jsonl 2>/dev/null; then
-            git add logs/line_history.jsonl
+          git add logs/line_history.jsonl logs/last_odds_snapshot.json
+          if git diff --staged --quiet; then
+            echo "No change to commit"
+          else
             git commit -m "Line snapshot $(date -u +%Y-%m-%dT%H:%M)"
             git push
-          else
-            echo "No change to commit"
           fi
