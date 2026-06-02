@@ -312,21 +312,22 @@ header {visibility: hidden;}
     .bet-name { font-size: 0.95rem; }
     .bet-edge { font-size: 1.2rem; }
 
-    /* Top-nav buttons: allow horizontal scroll on mobile */
-    [data-testid="stHorizontalBlock"]:first-of-type {
-        overflow-x: auto;
-        flex-wrap: nowrap !important;
-        gap: 0.25rem;
-    }
-    [data-testid="stHorizontalBlock"]:first-of-type button {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.5rem;
-        white-space: nowrap;
-        min-width: auto;
+    /* Pills nav: shrink labels on mobile */
+    [data-testid="stPills"] button {
+        font-size: 0.78rem !important;
+        padding: 0.4rem 0.6rem !important;
     }
 
-    /* Generic plotly chart */
+    /* Generic plotly chart — full bleed */
     .stPlotlyChart { margin: 0 -0.5rem; }
+}
+
+/* Pills nav (all viewports) — make active pill use NYK blue */
+[data-testid="stPills"] button[aria-pressed="true"],
+[data-testid="stPills"] button[aria-checked="true"] {
+    background-color: #006BB6 !important;
+    color: white !important;
+    border-color: #006BB6 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -476,20 +477,23 @@ with st.sidebar:
     st.markdown('<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 1.5rem;">Built with Streamlit · Not financial advice</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TOP NAV (visible even when sidebar is collapsed — mobile fallback)
-# Uses on_click callbacks: those CAN modify widget key state, while
-# direct assignment after-the-widget cannot.
+# TOP NAV — st.pills handles wrapping + active state natively on both
+# desktop and mobile. on_change callback syncs the sidebar radio.
 # ─────────────────────────────────────────────────────────────────────────────
-def _set_nav(target_page):
-    st.session_state.nav = target_page
+def _sync_from_pills():
+    new_val = st.session_state.get("top_pills")
+    if new_val and new_val != st.session_state.get("nav"):
+        st.session_state.nav = new_val
 
-nav_cols = st.columns(len(PAGES))
-for i, p in enumerate(PAGES.keys()):
-    with nav_cols[i]:
-        is_active = (p == page)
-        btn_type = "primary" if is_active else "secondary"
-        st.button(p, key=f"topnav_{i}", type=btn_type, width="stretch",
-                    on_click=_set_nav, args=(p,))
+st.pills(
+    "Navigate",
+    list(PAGES.keys()),
+    default=page,
+    selection_mode="single",
+    key="top_pills",
+    on_change=_sync_from_pills,
+    label_visibility="collapsed",
+)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE: OVERVIEW
