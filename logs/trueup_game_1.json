@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-06-03T23:18:41.382370+00:00",
+  "game_num": 1,
+  "matchup": "NYK @ SAS",
+  "tipoff": "2026-06-04T00:30:00Z",
+  "model": {
+    "home_win_prob": 0.5503729051426098,
+    "nyk_win_prob": 0.44962709485739016,
+    "predicted_margin": 1.8104307170411078,
+    "predicted_total": 221.26028490452063
+  }
+}

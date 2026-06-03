@@ -1,0 +1,13 @@
+{
+  "game_num": 1,
+  "snapshot_at": "2026-06-03T23:18:40.512536",
+  "home_team": "SAS",
+  "away_team": "NYK",
+  "home_win_prob": 0.6249353729501468,
+  "predicted_margin_home": 4.554105791506914,
+  "predicted_total": 221.42527316348168,
+  "analytic_margin": -2.3050818946576026,
+  "analytic_total": 221.0128025160791,
+  "bayesian_margin": 11.41329347767143,
+  "bayesian_total": 221.8377438108843
+}
