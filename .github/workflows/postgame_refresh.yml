@@ -23,20 +23,15 @@ jobs:
       - name: Install deps
         run: pip install -q numpy pandas scipy requests nba_api pyarrow
 
-      - name: Fetch latest games (with retries)
+      - name: Fetch latest games (best effort)
         id: fetch
-        timeout-minutes: 10
+        timeout-minutes: 6
+        continue-on-error: true
         run: |
-          for i in 1 2 3; do
-            if python fetch_data.py; then
-              echo "fetch_ok=true" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-            echo "Attempt $i failed, sleeping 60s before retry..."
-            sleep 60
-          done
-          echo "fetch_ok=false" >> $GITHUB_OUTPUT
-          echo "::warning::fetch_data.py failed after 3 attempts — continuing with stale data"
+          # stats.nba.com throttles GH Actions IPs. One attempt only — if it
+          # fails, the local cron on the user's Mac is the authoritative path.
+          python fetch_data.py
+          echo "fetch_ok=$?" >> $GITHUB_OUTPUT
 
       - name: Score any pending predictions
         continue-on-error: true

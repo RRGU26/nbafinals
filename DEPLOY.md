@@ -67,6 +67,35 @@ docker run -p 8501:8501 -e ODDS_API_KEY=your-key nbafinals
 
 Deploy to anywhere that runs Docker (Fly.io, Railway, Render, GCP Cloud Run, AWS ECS).
 
+## Automated refresh — local cron (PRIMARY)
+
+`stats.nba.com` rate-limits requests from cloud providers, so the GitHub
+Action that fetches game data fails ~daily. The reliable path is a local
+launchd job on your Mac (residential IPs aren't throttled).
+
+The launchd job is already installed at
+`~/Library/LaunchAgents/com.rr.nbafinals.refresh.plist`. It runs daily at
+**8:00 AM local time** and executes `scripts/local_refresh.sh`:
+
+```bash
+# Check it's loaded
+launchctl list | grep nbafinals
+
+# Reinstall if you ever break it
+launchctl unload ~/Library/LaunchAgents/com.rr.nbafinals.refresh.plist
+launchctl load ~/Library/LaunchAgents/com.rr.nbafinals.refresh.plist
+
+# Logs
+tail -f /tmp/nbafinals_refresh.log
+
+# Run it manually any time
+./scripts/local_refresh.sh
+```
+
+The script: pulls remote → fetches game data via `nba_api` → scores any
+pending prediction snapshots → re-simulates remaining games → closes
+open bets → commits + pushes if anything changed.
+
 ## Tracking prediction accuracy
 
 The Track Record page shows predicted vs actual margins/totals/win-calls
