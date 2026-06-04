@@ -23,16 +23,31 @@ jobs:
       - name: Install deps
         run: pip install -q numpy pandas scipy requests nba_api pyarrow
 
-      - name: Fetch latest games
-        run: python fetch_data.py
+      - name: Fetch latest games (with retries)
+        id: fetch
+        timeout-minutes: 10
+        run: |
+          for i in 1 2 3; do
+            if python fetch_data.py; then
+              echo "fetch_ok=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Attempt $i failed, sleeping 60s before retry..."
+            sleep 60
+          done
+          echo "fetch_ok=false" >> $GITHUB_OUTPUT
+          echo "::warning::fetch_data.py failed after 3 attempts — continuing with stale data"
 
       - name: Score any pending predictions
+        continue-on-error: true
         run: python scorecard.py score || echo "No snapshots to score yet"
 
       - name: Re-simulate remaining games
+        continue-on-error: true
         run: python series_sim.py
 
       - name: Close open bets (snapshot closing lines)
+        continue-on-error: true
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python clv.py close || echo "No open bets to close"

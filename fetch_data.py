@@ -6,32 +6,69 @@ Outputs to data/:
   - h2h.parquet             the 4 NYK-SAS regular-season meetings
 """
 
+import time
 from pathlib import Path
 
 import pandas as pd
 from nba_api.stats.endpoints import leaguegamelog
 from nba_api.stats.static import teams as nba_teams
+from nba_api.stats.library.http import NBAStatsHTTP
 
 SEASON = "2025-26"
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
+
+# stats.nba.com aggressively throttles cloud IPs (GitHub Actions, etc.) unless
+# we send browser-like headers. Patch the nba_api default headers + use a
+# longer timeout.
+NBA_HEADERS = {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Connection": "keep-alive",
+    "Host": "stats.nba.com",
+    "Origin": "https://www.nba.com",
+    "Referer": "https://www.nba.com/",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+    ),
+    "x-nba-stats-origin": "stats",
+    "x-nba-stats-token": "true",
+}
+NBAStatsHTTP.headers = NBA_HEADERS
 
 TEAMS = {t["full_name"]: t["id"] for t in nba_teams.get_teams()}
 NYK_ID = TEAMS["New York Knicks"]
 SAS_ID = TEAMS["San Antonio Spurs"]
 
 
-def fetch_league_log(season_type: str) -> pd.DataFrame:
-    log = leaguegamelog.LeagueGameLog(
-        season=SEASON,
-        player_or_team_abbreviation="T",
-        season_type_all_star=season_type,
-    )
-    df = log.get_data_frames()[0]
-    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
-    df["IS_HOME"] = df["MATCHUP"].str.contains("vs.", regex=False)
-    df["SEASON_TYPE"] = season_type
-    return df
+def fetch_league_log(season_type: str, max_attempts: int = 5) -> pd.DataFrame:
+    """Pull a season's team gamelog with retry + backoff on transient timeouts."""
+    last_err = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            log = leaguegamelog.LeagueGameLog(
+                season=SEASON,
+                player_or_team_abbreviation="T",
+                season_type_all_star=season_type,
+                timeout=60,  # was nba_api default 30s
+                headers=NBA_HEADERS,
+            )
+            df = log.get_data_frames()[0]
+            df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
+            df["IS_HOME"] = df["MATCHUP"].str.contains("vs.", regex=False)
+            df["SEASON_TYPE"] = season_type
+            return df
+        except Exception as e:
+            last_err = e
+            wait = 5 * (2 ** (attempt - 1))  # 5, 10, 20, 40, 80
+            print(f"  [{season_type}] attempt {attempt}/{max_attempts} failed: {e}. Retrying in {wait}s...")
+            time.sleep(wait)
+    raise RuntimeError(f"nba_api fetch failed after {max_attempts} attempts: {last_err}")
 
 
 def join_opponent(df: pd.DataFrame) -> pd.DataFrame:

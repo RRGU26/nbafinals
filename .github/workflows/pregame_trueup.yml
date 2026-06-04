@@ -68,9 +68,16 @@ jobs:
           fi
           echo "game_num=$GAME_NUM" >> $GITHUB_OUTPUT
 
-      - name: Refresh data
+      - name: Refresh data (with retries)
         if: steps.check.outputs.is_game == 'true'
-        run: python fetch_data.py
+        timeout-minutes: 10
+        run: |
+          for i in 1 2 3; do
+            if python fetch_data.py; then exit 0; fi
+            echo "fetch attempt $i failed, sleeping 60s..."
+            sleep 60
+          done
+          echo "::warning::fetch_data failed — proceeding with existing data"
 
       - name: Re-simulate with latest evidence
         if: steps.check.outputs.is_game == 'true'
