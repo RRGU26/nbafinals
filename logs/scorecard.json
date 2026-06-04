@@ -1,0 +1,38 @@
+{
+  "updated_at": "2026-06-04T09:30:44.969941",
+  "n_games_scored": 1,
+  "n_games_pending": 0,
+  "win_accuracy": 0.0,
+  "margin_rmse": 14.554105791506913,
+  "total_rmse": 21.425273163481677,
+  "analytic_margin_rmse": 7.694918105342397,
+  "bayesian_margin_rmse": 21.41329347767143,
+  "games": [
+    {
+      "game_num": 1,
+      "snapshot_at": "2026-06-03T23:18:40.512536",
+      "home_team": "SAS",
+      "away_team": "NYK",
+      "home_win_prob": 0.6249353729501468,
+      "predicted_margin_home": 4.554105791506914,
+      "predicted_total": 221.42527316348168,
+      "analytic_margin": -2.3050818946576026,
+      "analytic_total": 221.0128025160791,
+      "bayesian_margin": 11.41329347767143,
+      "bayesian_total": 221.8377438108843,
+      "scored": true,
+      "game_date": "2026-06-03",
+      "home_pts": 95,
+      "away_pts": 105,
+      "actual_margin": -10,
+      "actual_total": 200,
+      "home_won": false,
+      "game_id": "0042500401",
+      "margin_error": -14.554105791506913,
+      "total_error": -21.425273163481677,
+      "win_pred_correct": false,
+      "analytic_margin_err": -7.694918105342397,
+      "bayesian_margin_err": -21.41329347767143
+    }
+  ]
+}
