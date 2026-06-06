@@ -9,25 +9,25 @@
     {
       "key": "fanduel",
       "title": "FanDuel",
-      "last_update": "2026-06-06T16:41:18Z",
+      "last_update": "2026-06-06T18:12:47Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
-              "price": -130
+              "price": -132
             },
             {
               "name": "San Antonio Spurs",
-              "price": 110
+              "price": 112
             }
           ]
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -43,7 +43,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "Over",
@@ -62,11 +62,11 @@
     {
       "key": "draftkings",
       "title": "DraftKings",
-      "last_update": "2026-06-06T16:41:18Z",
+      "last_update": "2026-06-06T18:12:11Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:11Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -80,7 +80,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:11Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -96,7 +96,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:41:18Z",
+          "last_update": "2026-06-06T18:12:11Z",
           "outcomes": [
             {
               "name": "Over",
@@ -115,50 +115,50 @@
     {
       "key": "betrivers",
       "title": "BetRivers",
-      "last_update": "2026-06-06T16:41:36Z",
+      "last_update": "2026-06-06T18:12:29Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:41:36Z",
+          "last_update": "2026-06-06T18:12:29Z",
           "outcomes": [
             {
               "name": "New York Knicks",
-              "price": -130
+              "price": -134
             },
             {
               "name": "San Antonio Spurs",
-              "price": 106
+              "price": 108
             }
           ]
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:41:36Z",
+          "last_update": "2026-06-06T18:12:29Z",
           "outcomes": [
             {
               "name": "New York Knicks",
-              "price": -112,
+              "price": -113,
               "point": -2.0
             },
             {
               "name": "San Antonio Spurs",
-              "price": -112,
+              "price": -110,
               "point": 2.0
             }
           ]
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:41:36Z",
+          "last_update": "2026-06-06T18:12:29Z",
           "outcomes": [
             {
               "name": "Over",
-              "price": -110,
+              "price": -113,
               "point": 216.0
             },
             {
               "name": "Under",
-              "price": -113,
+              "price": -110,
               "point": 216.0
             }
           ]
@@ -168,11 +168,11 @@
     {
       "key": "betonlineag",
       "title": "BetOnline.ag",
-      "last_update": "2026-06-06T16:40:43Z",
+      "last_update": "2026-06-06T18:12:47Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -186,7 +186,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -202,7 +202,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "Over",
@@ -221,11 +221,11 @@
     {
       "key": "betmgm",
       "title": "BetMGM",
-      "last_update": "2026-06-06T16:40:42Z",
+      "last_update": "2026-06-06T18:12:47Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -239,7 +239,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -255,7 +255,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:12:47Z",
           "outcomes": [
             {
               "name": "Over",
@@ -274,11 +274,11 @@
     {
       "key": "lowvig",
       "title": "LowVig.ag",
-      "last_update": "2026-06-06T16:40:43Z",
+      "last_update": "2026-06-06T18:12:48Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:48Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -292,7 +292,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:48Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -308,7 +308,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:40:43Z",
+          "last_update": "2026-06-06T18:12:48Z",
           "outcomes": [
             {
               "name": "Over",
@@ -327,11 +327,11 @@
     {
       "key": "mybookieag",
       "title": "MyBookie.ag",
-      "last_update": "2026-06-06T16:40:42Z",
+      "last_update": "2026-06-06T18:10:57Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:10:57Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -339,13 +339,13 @@
             },
             {
               "name": "San Antonio Spurs",
-              "price": 109
+              "price": 110
             }
           ]
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:10:57Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -361,7 +361,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:40:42Z",
+          "last_update": "2026-06-06T18:10:57Z",
           "outcomes": [
             {
               "name": "Over",
@@ -380,11 +380,11 @@
     {
       "key": "bovada",
       "title": "Bovada",
-      "last_update": "2026-06-06T16:40:08Z",
+      "last_update": "2026-06-06T18:12:32Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-06-06T16:40:08Z",
+          "last_update": "2026-06-06T18:12:32Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -398,7 +398,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-06-06T16:40:08Z",
+          "last_update": "2026-06-06T18:12:32Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -414,7 +414,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-06-06T16:40:08Z",
+          "last_update": "2026-06-06T18:12:32Z",
           "outcomes": [
             {
               "name": "Over",
