@@ -4,23 +4,23 @@
       "game": 1,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.493676648461723,
+      "home_win_prob": 0.49367664846172293,
       "nyk_win_prob": 0.506323351538277,
-      "predicted_margin_home": -0.22666866361273463,
-      "predicted_total": 218.71158783906134,
+      "predicted_margin_home": -0.2266686636127353,
+      "predicted_total": 218.7115878390614,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 6.01873023189394
+      "bayes_margin_home": 6.018730231893938
     },
     {
       "game": 2,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.493676648461723,
+      "home_win_prob": 0.49367664846172293,
       "nyk_win_prob": 0.506323351538277,
-      "predicted_margin_home": -0.22666866361273463,
-      "predicted_total": 218.71158783906134,
+      "predicted_margin_home": -0.2266686636127353,
+      "predicted_total": 218.7115878390614,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 6.01873023189394
+      "bayes_margin_home": 6.018730231893938
     },
     {
       "game": 3,
@@ -29,9 +29,9 @@
       "home_win_prob": 0.7996239228646753,
       "nyk_win_prob": 0.7996239228646753,
       "predicted_margin_home": 12.015985075864346,
-      "predicted_total": 219.73879186598032,
+      "predicted_total": 219.73879186598037,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 11.95232447561143
+      "bayes_margin_home": 11.952324475611434
     },
     {
       "game": 4,
@@ -40,20 +40,20 @@
       "home_win_prob": 0.7996239228646753,
       "nyk_win_prob": 0.7996239228646753,
       "predicted_margin_home": 12.015985075864346,
-      "predicted_total": 219.73879186598032,
+      "predicted_total": 219.73879186598037,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 11.95232447561143
+      "bayes_margin_home": 11.952324475611434
     },
     {
       "game": 5,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.493676648461723,
+      "home_win_prob": 0.49367664846172293,
       "nyk_win_prob": 0.506323351538277,
-      "predicted_margin_home": -0.22666866361273463,
-      "predicted_total": 218.71158783906134,
+      "predicted_margin_home": -0.2266686636127353,
+      "predicted_total": 218.7115878390614,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 6.01873023189394
+      "bayes_margin_home": 6.018730231893938
     },
     {
       "game": 6,
@@ -62,20 +62,20 @@
       "home_win_prob": 0.7996239228646753,
       "nyk_win_prob": 0.7996239228646753,
       "predicted_margin_home": 12.015985075864346,
-      "predicted_total": 219.73879186598032,
+      "predicted_total": 219.73879186598037,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 11.95232447561143
+      "bayes_margin_home": 11.952324475611434
     },
     {
       "game": 7,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.493676648461723,
+      "home_win_prob": 0.49367664846172293,
       "nyk_win_prob": 0.506323351538277,
-      "predicted_margin_home": -0.22666866361273463,
-      "predicted_total": 218.71158783906134,
+      "predicted_margin_home": -0.2266686636127353,
+      "predicted_total": 218.7115878390614,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 6.01873023189394
+      "bayes_margin_home": 6.018730231893938
     }
   ],
   "simulation": {
