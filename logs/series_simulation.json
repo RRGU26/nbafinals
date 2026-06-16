@@ -4,23 +4,23 @@
       "game": 1,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.47417662247301956,
-      "nyk_win_prob": 0.5258233775269805,
-      "predicted_margin_home": -0.9262807363371328,
-      "predicted_total": 217.62528955541814,
+      "home_win_prob": 0.47417662247301934,
+      "nyk_win_prob": 0.5258233775269807,
+      "predicted_margin_home": -0.9262807363371399,
+      "predicted_total": 217.62528955541802,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 3.68668998947928
+      "bayes_margin_home": 3.6866899894792566
     },
     {
       "game": 2,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.47417662247301956,
-      "nyk_win_prob": 0.5258233775269805,
-      "predicted_margin_home": -0.9262807363371328,
-      "predicted_total": 217.62528955541814,
+      "home_win_prob": 0.47417662247301934,
+      "nyk_win_prob": 0.5258233775269807,
+      "predicted_margin_home": -0.9262807363371399,
+      "predicted_total": 217.62528955541802,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 3.68668998947928
+      "bayes_margin_home": 3.6866899894792566
     },
     {
       "game": 3,
@@ -28,10 +28,10 @@
       "away": "SAS",
       "home_win_prob": 0.7923033130116859,
       "nyk_win_prob": 0.7923033130116859,
-      "predicted_margin_home": 11.646480951376144,
-      "predicted_total": 219.34531385867695,
+      "predicted_margin_home": 11.646480951376141,
+      "predicted_total": 219.34531385867686,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 10.720644060650761
+      "bayes_margin_home": 10.720644060650743
     },
     {
       "game": 4,
@@ -39,21 +39,21 @@
       "away": "SAS",
       "home_win_prob": 0.7923033130116859,
       "nyk_win_prob": 0.7923033130116859,
-      "predicted_margin_home": 11.646480951376144,
-      "predicted_total": 219.34531385867695,
+      "predicted_margin_home": 11.646480951376141,
+      "predicted_total": 219.34531385867686,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 10.720644060650761
+      "bayes_margin_home": 10.720644060650743
     },
     {
       "game": 5,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.47417662247301956,
-      "nyk_win_prob": 0.5258233775269805,
-      "predicted_margin_home": -0.9262807363371328,
-      "predicted_total": 217.62528955541814,
+      "home_win_prob": 0.47417662247301934,
+      "nyk_win_prob": 0.5258233775269807,
+      "predicted_margin_home": -0.9262807363371399,
+      "predicted_total": 217.62528955541802,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 3.68668998947928
+      "bayes_margin_home": 3.6866899894792566
     },
     {
       "game": 6,
@@ -61,21 +61,21 @@
       "away": "SAS",
       "home_win_prob": 0.7923033130116859,
       "nyk_win_prob": 0.7923033130116859,
-      "predicted_margin_home": 11.646480951376144,
-      "predicted_total": 219.34531385867695,
+      "predicted_margin_home": 11.646480951376141,
+      "predicted_total": 219.34531385867686,
       "analytic_margin_home": 12.043268190258454,
-      "bayes_margin_home": 10.720644060650761
+      "bayes_margin_home": 10.720644060650743
     },
     {
       "game": 7,
       "home": "SAS",
       "away": "NYK",
-      "home_win_prob": 0.47417662247301956,
-      "nyk_win_prob": 0.5258233775269805,
-      "predicted_margin_home": -0.9262807363371328,
-      "predicted_total": 217.62528955541814,
+      "home_win_prob": 0.47417662247301934,
+      "nyk_win_prob": 0.5258233775269807,
+      "predicted_margin_home": -0.9262807363371399,
+      "predicted_total": 217.62528955541802,
       "analytic_margin_home": -2.903268190258453,
-      "bayes_margin_home": 3.68668998947928
+      "bayes_margin_home": 3.6866899894792566
     }
   ],
   "simulation": {
@@ -114,12 +114,12 @@
     "7": "SAS"
   },
   "nyk_per_game_probs": [
-    0.5258233775269805,
-    0.5258233775269805,
+    0.5258233775269807,
+    0.5258233775269807,
     0.7923033130116859,
     0.7923033130116859,
-    0.5258233775269805,
+    0.5258233775269807,
     0.7923033130116859,
-    0.5258233775269805
+    0.5258233775269807
   ]
 }
