@@ -9,25 +9,25 @@
     {
       "key": "fanduel",
       "title": "FanDuel",
-      "last_update": "2026-08-11T16:25:28Z",
+      "last_update": "2026-08-11T17:30:44Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-08-11T16:25:28Z",
+          "last_update": "2026-08-11T17:30:44Z",
           "outcomes": [
             {
               "name": "New York Knicks",
-              "price": -102
+              "price": -104
             },
             {
               "name": "San Antonio Spurs",
-              "price": -116
+              "price": -112
             }
           ]
         },
         {
           "key": "spreads",
-          "last_update": "2026-08-11T16:25:28Z",
+          "last_update": "2026-08-11T17:30:44Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -43,7 +43,113 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-08-11T16:25:28Z",
+          "last_update": "2026-08-11T17:30:44Z",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -110,
+              "point": 227.5
+            },
+            {
+              "name": "Under",
+              "price": -110,
+              "point": 227.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betrivers",
+      "title": "BetRivers",
+      "last_update": "2026-08-11T17:30:20Z",
+      "markets": [
+        {
+          "key": "h2h",
+          "last_update": "2026-08-11T17:30:20Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -112
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -112
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "last_update": "2026-08-11T17:30:20Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -107,
+              "point": -1.0
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -117,
+              "point": 1.0
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "last_update": "2026-08-11T17:30:20Z",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -110,
+              "point": 230.0
+            },
+            {
+              "name": "Under",
+              "price": -113,
+              "point": 230.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "draftkings",
+      "title": "DraftKings",
+      "last_update": "2026-08-11T17:30:53Z",
+      "markets": [
+        {
+          "key": "h2h",
+          "last_update": "2026-08-11T17:30:53Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -115
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -105
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "last_update": "2026-08-11T17:30:53Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -105,
+              "point": -1.5
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -115,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "last_update": "2026-08-11T17:30:53Z",
           "outcomes": [
             {
               "name": "Over",
@@ -54,6 +160,59 @@
               "name": "Under",
               "price": -110,
               "point": 229.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betmgm",
+      "title": "BetMGM",
+      "last_update": "2026-08-11T17:28:50Z",
+      "markets": [
+        {
+          "key": "h2h",
+          "last_update": "2026-08-11T17:28:50Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -115
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -105
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "last_update": "2026-08-11T17:28:50Z",
+          "outcomes": [
+            {
+              "name": "New York Knicks",
+              "price": -110,
+              "point": -1.5
+            },
+            {
+              "name": "San Antonio Spurs",
+              "price": -110,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "last_update": "2026-08-11T17:28:50Z",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -110,
+              "point": 227.5
+            },
+            {
+              "name": "Under",
+              "price": -110,
+              "point": 227.5
             }
           ]
         }
