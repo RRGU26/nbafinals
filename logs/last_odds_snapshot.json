@@ -9,11 +9,11 @@
     {
       "key": "betrivers",
       "title": "BetRivers",
-      "last_update": "2026-11-03T03:09:28Z",
+      "last_update": "2026-11-03T03:33:43Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-11-03T03:09:28Z",
+          "last_update": "2026-11-03T03:33:43Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -27,7 +27,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-11-03T03:09:28Z",
+          "last_update": "2026-11-03T03:33:43Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -43,7 +43,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-11-03T03:09:28Z",
+          "last_update": "2026-11-03T03:33:43Z",
           "outcomes": [
             {
               "name": "Over",
@@ -62,11 +62,11 @@
     {
       "key": "draftkings",
       "title": "DraftKings",
-      "last_update": "2026-11-03T03:09:07Z",
+      "last_update": "2026-11-03T03:34:04Z",
       "markets": [
         {
           "key": "h2h",
-          "last_update": "2026-11-03T03:09:06Z",
+          "last_update": "2026-11-03T03:34:03Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -80,7 +80,7 @@
         },
         {
           "key": "spreads",
-          "last_update": "2026-11-03T03:09:06Z",
+          "last_update": "2026-11-03T03:34:03Z",
           "outcomes": [
             {
               "name": "New York Knicks",
@@ -96,7 +96,7 @@
         },
         {
           "key": "totals",
-          "last_update": "2026-11-03T03:09:06Z",
+          "last_update": "2026-11-03T03:34:03Z",
           "outcomes": [
             {
               "name": "Over",
